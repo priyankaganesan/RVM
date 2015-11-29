@@ -35,6 +35,7 @@ typedef struct {
 
 /*
  * Undo log for specific tid
+ * Used within each transaction_info struct
  */
 typedef struct 
 {
@@ -45,7 +46,7 @@ typedef struct
 } undo_log_t;
 
 /*
- * Contains information for transaction tid
+ * Contains information for each transaction tid
  * RVM, segments modified, undo log
  */
 typedef struct 
@@ -55,6 +56,3 @@ typedef struct
 	map <void*, segment_t*> segments;
 	map <void*, list<undo_log_t> > undo_logs;
 } transaction_info;
-
-
-
