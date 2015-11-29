@@ -8,6 +8,11 @@ using namespace std;
 
 typedef int trans_t;
 
+/*
+ * Segment attributes
+ * is_valid: has been mapped
+ * currently_used: in a transaction
+ */
 typedef struct
 {
 	char name[256];
@@ -17,12 +22,20 @@ typedef struct
 	int currently_used;
 } segment_t;
 
+/*
+ * RVM
+ * Directory name on disk
+ * List of segments
+ */
 typedef struct {
-//  char file_path[256];
   string file_path;
+  //<segname, segment_t>
   map <string, segment_t> segment_map;
 } rvm_t;
 
+/*
+ * Undo log for specific tid
+ */
 typedef struct 
 {
 	int offset_val;
@@ -31,9 +44,14 @@ typedef struct
 	int backup_valid;
 } undo_log_t;
 
+/*
+ * Contains information for transaction tid
+ * RVM, segments modified, undo log
+ */
 typedef struct 
 {
 	rvm_t rvm;
+	//<segbase (void* address of segment), segment_t*>
 	map <void*, segment_t*> segments;
 	map <void*, list<undo_log_t> > undo_logs;
 } transaction_info;
