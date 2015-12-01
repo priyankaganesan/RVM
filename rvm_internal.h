@@ -13,9 +13,9 @@ typedef int trans_t;
  * is_valid: has been mapped
  * currently_used: in a transaction
  */
-typedef struct
+typedef struct segment
 {
-	char name[256];
+	string segname;
 	void *address;
 	int size;
 	int is_valid;
@@ -27,11 +27,13 @@ typedef struct
  * Directory name on disk
  * List of segments
  */
-typedef struct {
-  string file_path;
-  //<segname, segment_t>
-  map <string, segment_t> segment_map;
-} rvm_t;
+typedef struct rvm
+{
+	string file_path;
+	list<segment_t> seg_list;
+} rvm_struct;
+
+typedef rvm_struct* rvm_t;
 
 /*
  * Undo log for specific tid
@@ -39,20 +41,30 @@ typedef struct {
  */
 typedef struct 
 {
-	int offset_val;
-	void *backup_data;
+	int offset;
 	int size;
+	void *backup_data;
 	int backup_valid;
 } undo_log_t;
+
+/*
+ * Undo log for specific tid
+ * Used within each transaction_info struct
+ */
+typedef struct 
+{
+	int offset;
+	int size;
+	void *new_data;
+} redo_log_t;
 
 /*
  * Contains information for each transaction tid
  * RVM, segments modified, undo log
  */
-typedef struct 
+ typedef struct 
 {
 	rvm_t rvm;
-	//<segbase (void* address of segment), segment_t*>
-	map <void*, segment_t*> segments;
-	map <void*, list<undo_log_t> > undo_logs;
+	map<void*, segment_t*> segments;
+	map<void*, list<undo_log_t> > undo_logs;
 } transaction_info;
