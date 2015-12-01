@@ -9,9 +9,13 @@ Compilation:
 
 Directory Structure:
 RVM
+
 -rvm.h
+
 -rvm_internal.h
+
 -rvm.cpp
+
 -README.md
 
 In the top directory(RVM), type: 
@@ -45,13 +49,15 @@ A transaction is a set of operations performed on multiple segments in main memo
 
 When rvm_begin_transaction is called, a unique transaction ID is created, which is associated with a list of segments associated with the transaction, along with a set of undo logs per segment. 
 
-1. Undo log:
+##Undo log:
 This log is created when there is going to be a modification on a segment, and stores a running record of all operations on all segments over the course of the transaction. It contains the offset of the modification, the size, and a backup of the data. It is used in two situations.
 * When a running transaction is aborted, this undo log file is read from most to least recent, and the logs are applied to revert to the original state of the segment. This ensures that the data in memory during an abort is consistent with that on disk
 * When a transaction is committed, the undo log is converted and appended into multiple redo logs, which are unique to each segment on disk.
 
 
-2. Redo Log:
+
+
+##Redo Log:
 The redo log is a mapping of the contents of the undo log. It is used in two scenarios:
 * When the map() function is called on a segment, the redo log for that particular function is first applied, before mapping happens. This ensures that any uncommited transactions are updated before the segment is mapped.
 * When truncate_log() is called, changes from the redo logs are applied into the segments on disk to keep them persistent. Only once all the changes are applied, the redo log is removed from disk and then recreated. This ensures they do not infinitely grow. 
